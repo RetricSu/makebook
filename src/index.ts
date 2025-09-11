@@ -28,4 +28,9 @@ program
     }
   });
 
-program.parseAsync(process.argv);
+// pnpm and some wrappers may insert a standalone "--" into argv which
+// marks the end of options for the wrapper and would prevent commander
+// from seeing flags that come after it. Filter out any lone "--" so
+// CLI flags like `-o` are parsed normally when using `pnpm run dev -- ...`.
+const argv = process.argv.filter((a) => a !== '--');
+program.parseAsync(argv);
