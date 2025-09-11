@@ -60,6 +60,8 @@ export async function convertPdfToBooklet(
   // We'll use sheet width = baseWidth * 2, height = baseHeight (i.e., A4 landscape if input is A4 portrait)
   const sheetWidth = baseWidth * 2;
   const sheetHeight = baseHeight;
+  const gutter = 36; // points (~12.7mm) center spine gutter
+  const halfAvailableWidth = (sheetWidth - gutter) / 2;
 
   // Pair pages: (0, pageCount-1), (1, pageCount-2), ...
   const pairsArr = computePairs(pageCount);
@@ -103,36 +105,32 @@ export async function convertPdfToBooklet(
     // Alternate layout per sheet to support duplex printing:
     // - For even sheets (0-based i % 2 === 0): place higher-indexed page on the left
     // - For odd sheets (i % 2 === 1): reverse so lower-indexed page is on the left
+    // compute scale to fit each page into halfAvailableWidth x sheetHeight while preserving aspect
+    const scaleAndPosition = (emb: any, placeOnLeft: boolean) => {
+      const pw = emb.width ?? baseWidth;
+      const ph = emb.height ?? baseHeight;
+      const scale = Math.min(halfAvailableWidth / pw, sheetHeight / ph);
+      const drawWidth = pw * scale;
+      const drawHeight = ph * scale;
+      const y = (sheetHeight - drawHeight) / 2;
+      const x = placeOnLeft ? 0 : sheetWidth - drawWidth;
+      return { x, y, width: drawWidth, height: drawHeight };
+    };
+
     if (i % 2 === 0) {
       // higher-indexed page on the left
-      outPage.drawPage(embRight, {
-        x: 0,
-        y: 0,
-        width: baseWidth,
-        height: baseHeight,
-      });
+      const leftParams = scaleAndPosition(embRight, true);
+      outPage.drawPage(embRight, leftParams);
 
-      outPage.drawPage(embLeft, {
-        x: baseWidth,
-        y: 0,
-        width: baseWidth,
-        height: baseHeight,
-      });
+      const rightParams = scaleAndPosition(embLeft, false);
+      outPage.drawPage(embLeft, rightParams);
     } else {
       // reversed for this sheet
-      outPage.drawPage(embLeft, {
-        x: 0,
-        y: 0,
-        width: baseWidth,
-        height: baseHeight,
-      });
+      const leftParams = scaleAndPosition(embLeft, true);
+      outPage.drawPage(embLeft, leftParams);
 
-      outPage.drawPage(embRight, {
-        x: baseWidth,
-        y: 0,
-        width: baseWidth,
-        height: baseHeight,
-      });
+      const rightParams = scaleAndPosition(embRight, false);
+      outPage.drawPage(embRight, rightParams);
     }
   }
 
