@@ -60,7 +60,7 @@ export async function convertPdfToBooklet(
   // We'll use sheet width = baseWidth * 2, height = baseHeight (i.e., A4 landscape if input is A4 portrait)
   const sheetWidth = baseWidth * 2;
   const sheetHeight = baseHeight;
-  const gutter = 36; // points (~12.7mm) center spine gutter
+  const gutter = 72; // points (~25.4mm) center spine gutter
   const halfAvailableWidth = (sheetWidth - gutter) / 2;
 
   // Pair pages: (0, pageCount-1), (1, pageCount-2), ...
