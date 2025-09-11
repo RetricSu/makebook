@@ -132,6 +132,23 @@ export async function convertPdfToBooklet(
       const rightParams = scaleAndPosition(embRight, false);
       outPage.drawPage(embRight, rightParams);
     }
+
+    // Draw a thin vertical cut line at the center of the sheet to help users
+    // align cuts between the left and right pages. This uses a faint gray
+    // rectangle 1pt wide spanning the full page height.
+    const centerX = sheetWidth / 2;
+    try {
+      outPage.drawRectangle({
+        x: centerX - 0.5,
+        y: 0,
+        width: 1,
+        height: sheetHeight,
+        color: rgb(0.6, 0.6, 0.6),
+        opacity: 0.5,
+      });
+    } catch (e) {
+      // ignore drawing errors (non-fatal)
+    }
   }
 
   if (opts.dryRun) return;
