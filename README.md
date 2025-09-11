@@ -3,6 +3,7 @@
 A CLI tool to convert a regular PDF into a booklet-printable PDF (scaffold).
 
 Features included in this scaffold:
+
 - TypeScript + pnpm project setup
 - CLI wiring using `commander`
 - Basic converter that loads a PDF, pads it to a multiple of 4 pages, and writes an output PDF
@@ -29,6 +30,7 @@ pnpm run dev -- input.pdf -o output.pdf
 ```
 
 Next steps
+
 - Implement page imposition (2-up/4-up) to lay out pages for booklet printing
 - Add tests and sample PDFs
 - Add options for page size and signatures

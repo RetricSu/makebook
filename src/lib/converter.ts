@@ -1,4 +1,5 @@
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
+import { computePairs } from './pairing';
 import fs from 'fs/promises';
 
 export type ConvertOptions = {
@@ -12,7 +13,11 @@ export type ConvertOptions = {
  * - currently copies pages in order into a new PDF (placeholder for actual imposition)
  * - writes output PDF
  */
-export async function convertPdfToBooklet(inputPath: string, outputPath: string, opts: ConvertOptions = {}) {
+export async function convertPdfToBooklet(
+  inputPath: string,
+  outputPath: string,
+  opts: ConvertOptions = {}
+) {
   const inputBytes = await fs.readFile(inputPath);
   const srcDoc = await PDFDocument.load(inputBytes);
 
@@ -57,10 +62,10 @@ export async function convertPdfToBooklet(inputPath: string, outputPath: string,
   const sheetHeight = baseHeight;
 
   // Pair pages: (0, pageCount-1), (1, pageCount-2), ...
-  const pairs = pageCount / 2;
+  const pairsArr = computePairs(pageCount);
+  const pairs = pairsArr.length;
   for (let i = 0; i < pairs; i++) {
-    const leftIdx = i;
-    const rightIdx = pageCount - 1 - i;
+    const [leftIdx, rightIdx] = pairsArr[i];
 
     // Create a one-page PDF for the left page and embed it
     const leftTemp = await PDFDocument.create();
@@ -68,7 +73,9 @@ export async function convertPdfToBooklet(inputPath: string, outputPath: string,
     leftTemp.addPage(copiedLeft);
     // Draw a tiny invisible rectangle to ensure the page has a Contents stream
     try {
-      leftTemp.getPage(0).drawRectangle({ x: 0, y: 0, width: 1, height: 1, color: rgb(1, 1, 1), opacity: 0 });
+      leftTemp
+        .getPage(0)
+        .drawRectangle({ x: 0, y: 0, width: 1, height: 1, color: rgb(1, 1, 1), opacity: 0 });
     } catch (e) {
       // ignore if drawing fails
     }
@@ -81,7 +88,9 @@ export async function convertPdfToBooklet(inputPath: string, outputPath: string,
     const [copiedRight] = await rightTemp.copyPages(srcDoc, [rightIdx]);
     rightTemp.addPage(copiedRight);
     try {
-      rightTemp.getPage(0).drawRectangle({ x: 0, y: 0, width: 1, height: 1, color: rgb(1, 1, 1), opacity: 0 });
+      rightTemp
+        .getPage(0)
+        .drawRectangle({ x: 0, y: 0, width: 1, height: 1, color: rgb(1, 1, 1), opacity: 0 });
     } catch (e) {
       // ignore if drawing fails
     }

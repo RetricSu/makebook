@@ -11,4 +11,7 @@ async function main() {
   console.log('Wrote sample.pdf (3 pages)');
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -6,14 +6,17 @@ const program = new Command();
 
 program
   .name('makebook')
-  .description('Convert a PDF into a booklet-printable PDF')
+  .description('Convert a PDF into a booklet-printable PDF (2-up, fixed pairing)')
+  .version('0.1.0')
   .argument('<input>', 'input PDF file')
   .option('-o, --output <file>', 'output PDF file', 'booklet.pdf')
   .option('--dry-run', 'do not write output file')
   .action(async (input: string, options: { output: string; dryRun?: boolean }) => {
     try {
-      console.log(`Input: ${input}`);
-      console.log(`Output: ${options.output}`);
+      console.log(`Converting: ${input} -> ${options.output}`);
+      console.log(
+        'Behavior: places pages as (1,last), (2,last-1), ... on sheets with 2 pages per A4 sheet. No config.'
+      );
       if (options.dryRun) {
         console.log('Dry run: no file will be written.');
       }
