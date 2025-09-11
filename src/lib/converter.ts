@@ -100,20 +100,40 @@ export async function convertPdfToBooklet(
 
     const outPage = outDoc.addPage([sheetWidth, sheetHeight]);
 
-    // Draw higher-indexed page on the left, lower-indexed on the right
-    outPage.drawPage(embRight, {
-      x: 0,
-      y: 0,
-      width: baseWidth,
-      height: baseHeight,
-    });
+    // Alternate layout per sheet to support duplex printing:
+    // - For even sheets (0-based i % 2 === 0): place higher-indexed page on the left
+    // - For odd sheets (i % 2 === 1): reverse so lower-indexed page is on the left
+    if (i % 2 === 0) {
+      // higher-indexed page on the left
+      outPage.drawPage(embRight, {
+        x: 0,
+        y: 0,
+        width: baseWidth,
+        height: baseHeight,
+      });
 
-    outPage.drawPage(embLeft, {
-      x: baseWidth,
-      y: 0,
-      width: baseWidth,
-      height: baseHeight,
-    });
+      outPage.drawPage(embLeft, {
+        x: baseWidth,
+        y: 0,
+        width: baseWidth,
+        height: baseHeight,
+      });
+    } else {
+      // reversed for this sheet
+      outPage.drawPage(embLeft, {
+        x: 0,
+        y: 0,
+        width: baseWidth,
+        height: baseHeight,
+      });
+
+      outPage.drawPage(embRight, {
+        x: baseWidth,
+        y: 0,
+        width: baseWidth,
+        height: baseHeight,
+      });
+    }
   }
 
   if (opts.dryRun) return;
