@@ -100,16 +100,15 @@ export async function convertPdfToBooklet(
 
     const outPage = outDoc.addPage([sheetWidth, sheetHeight]);
 
-    // Draw left page at x=0, full height
-    outPage.drawPage(embLeft, {
+    // Draw higher-indexed page on the left, lower-indexed on the right
+    outPage.drawPage(embRight, {
       x: 0,
       y: 0,
       width: baseWidth,
       height: baseHeight,
     });
 
-    // Draw right page at x=baseWidth, full height
-    outPage.drawPage(embRight, {
+    outPage.drawPage(embLeft, {
       x: baseWidth,
       y: 0,
       width: baseWidth,
