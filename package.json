@@ -1,18 +1,22 @@
 {
   "name": "makebook",
-  "version": "0.1.0",
+  "version": "0.1.0-rc1",
   "description": "CLI tool to convert PDFs into booklet-printable PDFs (scaffold)",
   "main": "dist/index.js",
   "bin": {
     "makebook": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "ncc build src/index.ts -o dist --license licenses.txt",
     "dev": "node -r ts-node/register src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
     "format": "prettier --write ."
   },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "keywords": [
     "pdf",
     "booklet",
@@ -27,9 +31,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vercel/ncc": "^0.38.3",
+    "prettier": "^2.8.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.0",
-    "vitest": "^0.32.0",
-    "prettier": "^2.8.0"
+    "vitest": "^0.32.0"
   }
 }
