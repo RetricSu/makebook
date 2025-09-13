@@ -1,5 +1,5 @@
 {
-  "name": "makebook",
+  "name": "@retric/makebook",
   "version": "0.1.0-rc1",
   "description": "CLI tool to convert PDFs into booklet-printable PDFs (scaffold)",
   "main": "dist/index.js",
