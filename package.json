@@ -17,13 +17,18 @@
     "dist/",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RetricSu/makebook.git"
+  },
+  "homepage": "https://github.com/RetricSu/makebook#readme",
   "keywords": [
     "pdf",
     "booklet",
     "imposition",
     "cli"
   ],
-  "author": "",
+  "author": "RetricSu",
   "license": "MIT",
   "dependencies": {
     "commander": "^10.0.0",
